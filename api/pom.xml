@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.reference</groupId>
         <artifactId>reference-aws-localstack-docker-app</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>api</artifactId>

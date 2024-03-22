@@ -34,7 +34,7 @@
         <dependency>
             <groupId>org.reference</groupId>
             <artifactId>common-lib</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
