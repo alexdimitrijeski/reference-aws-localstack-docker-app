@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  fake-smtp-server:
+    container_name: "test-smtp-server"
+    image: gessnerfl/fake-smtp-server:latest
+    hostname: localhost
+    ports:
+#      - 5000:5000      #expose smtp port
+#      - 5080:5080      #expose web ui
+#      - 5081:5081      #expose management api
+      - "5000:5000" # smtp server container port
+      - "127.0.0.1:5080-5081:5080-5081"  # external services port range
+    environment:
+      - FAKESMTP_PORT=5000
+      - SERVER_PORT=5080
+      - MANAGEMENT_SERVER_PORT=5081

@@ -1,0 +1,214 @@
+openapi: '3.0.3'
+info:
+  description: '>-
+    Reference service using an OpenAPI Contract First approach and Hexagonal Architecture (Clean Code)'
+  version: '1.0.0'
+  title: 'Contract First - Hexagonal Reference API'
+
+servers:
+  - url: 'http://localhost:8080/'
+    description: 'Sandbox server (uses test data)'
+
+tags:
+  - name: Example
+    description: 'Example template for APIs'
+
+paths:
+  '/example':
+    get:
+      tags:
+        - Example
+      operationId: getExample
+      summary: 'Get Example from the API'
+      description: 'Get Example from the API'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExampleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  '/user/{id}':
+    get:
+      tags:
+        - User
+      operationId: getUser
+      summary: 'Get User from the API'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      description: 'Get User from the API'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExampleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    AbstractObject:
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: '^[a-zA-Z0-9]{27}$'
+          example: '1HCpXwx2EK9oYluWbacgeCnFcLf'
+        creationUsername:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        lastUpdateUsername:
+          type: string
+        lastUpdateDate:
+          type: string
+          format: date-time
+          description: Last update date and time
+          example: "2021-01-30T08:30:00Z"
+        state:
+          type: string
+        version:
+          type: string
+        validFrom:
+          type: string
+          format: date-time
+          description: Valid from date and time
+          example: "2021-01-30T08:30:00Z"
+        validTo:
+          type: string
+          format: date-time
+          description: Valid to date and time
+          example: "2021-01-30T08:30:00Z"
+    ExpirableObject:
+      allOf:
+        - $ref: "#/components/schemas/AbstractObject"
+      type: object
+      properties:
+        validFrom:
+          type: string
+          format: date-time
+          description: Valid from date and time
+          example: "2021-01-30T08:30:00Z"
+        validTo:
+          type: string
+          format: date-time
+          description: Valid to date and time
+          example: "2021-01-30T08:30:00Z"
+
+    Example:
+      allOf:
+        - $ref: "#/components/schemas/ExpirableObject"
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: '^[a-zA-Z0-9]{27}$'
+          example: '1HCpXwx2EK9oYluWbacgeCnFcLf'
+
+    ExampleResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Example'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+
+    UserAPI:
+      allOf:
+        - $ref: "#/components/schemas/AbstractObject"
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: '^[a-zA-Z0-9]{27}$'
+          example: '1HCpXwx2EK9oYluWbacgeCnFcLf'
+        userName:
+          type: string
+
+    UserResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAPI'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'A string representing actual human- readable message.'
+        type:
+          type: string
+          example: 'Message Type, such as INFO, WARN, etc'
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          description: 'One of a server-defined set of error codes.'
+          type: string
+          example: '400, 404 or 500'
+        message:
+          description: 'A human-readable representation of the error.'
+          type: string
+          example: 'Enter a value in the orderID field.The orderID cannot be submitted with a null.'
+
+  responses:
+    ExampleResponse:
+      description: 'SUCCESSFUL'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExampleResponse'
+    UserResponse:
+      description: 'SUCCESSFUL'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserResponse'
+
+    BadRequest:
+      description: >-
+        Bad Request response indicating that the server cannot process the
+        request due to malformed request syntax, invalid request message
+        framing, etc., and request must not be repeated without modification.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFound:
+      description: >-
+        Not found response indicating that the server did not found the target
+        resource or is not willing to disclose its existence, either temporary
+        or permanent.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
